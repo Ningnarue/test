@@ -3,323 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดเก็บเอกสารหน่วยงาน</title>
+    <title>ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             box-sizing: border-box;
         }
-        .document-card:hover {
-            transform: translateY(-2px);
-            transition: all 0.3s ease;
-        }
-        .category-tab.active {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Sarabun', sans-serif;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen font-sans">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-800 mb-2">📁 ระบบจัดเก็บเอกสารหน่วยงาน</h1>
-                    <p class="text-gray-600">จัดการและเข้าถึงเอกสารสำคัญของหน่วยงาน</p>
-                </div>
-                <button onclick="showUploadModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-                    ➕ เพิ่มเอกสาร
-                </button>
+            <h1 class="text-3xl font-bold text-gray-800 text-center mb-2">
+                📋 ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล
+            </h1>
+            <p class="text-gray-600 text-center">
+                เอกสารแนวทาง/มาตรฐาน/คู่มือการปฏิบัติงานทางการพยาบาล
+            </p>
+            <div class="mt-4 text-center">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
+                    📊 รวม 23 เอกสาร
+                </span>
             </div>
         </div>
 
         <!-- Search Bar -->
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="flex gap-4">
-                <div class="flex-1">
-                    <input type="text" id="searchInput" placeholder="🔍 ค้นหาเอกสาร..." 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           oninput="filterDocuments()">
+            <div class="relative mb-4">
+                <input 
+                    type="text" 
+                    id="searchInput"
+                    placeholder="🔍 ค้นหาเอกสาร (รหัส หรือ ชื่อเอกสาร)..."
+                    class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                >
+                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                    🔍
                 </div>
-                <select id="categoryFilter" onchange="filterDocuments()" 
-                        class="px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <option value="">ทุกหมวดหมู่</option>
-                    <option value="บริหาร">เอกสารบริหาร</option>
-                    <option value="การเงิน">เอกสารการเงิน</option>
-                    <option value="บุคลากร">เอกสารบุคลากร</option>
-                    <option value="โครงการ">เอกสารโครงการ</option>
-                    <option value="อื่นๆ">อื่นๆ</option>
-                </select>
+            </div>
+            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                <div class="flex items-start space-x-2">
+                    <span class="text-yellow-600">💡</span>
+                    <div class="text-sm text-yellow-800">
+                        <strong>วิธีใส่ลิงก์เอกสาร:</strong> 
+                        <br>1. เปิดไฟล์ HTML ในโปรแกรมแก้ไขข้อความ
+                        <br>2. หาบรรทัดที่มี <code class="bg-yellow-100 px-1 rounded">url: ""</code> ของเอกสารที่ต้องการ
+                        <br>3. ใส่ลิงก์ระหว่างเครื่องหมายคำพูด เช่น <code class="bg-yellow-100 px-1 rounded">url: "https://example.com/document.pdf"</code>
+                        <br>4. บันทึกไฟล์และรีเฟรชหน้าเว็บ
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Category Tabs -->
-        <div class="flex flex-wrap gap-2 mb-8">
-            <button onclick="setActiveCategory('all')" class="category-tab active px-6 py-3 rounded-lg font-medium transition-all bg-gray-200 text-gray-700">
-                📋 ทั้งหมด
-            </button>
-            <button onclick="setActiveCategory('บริหาร')" class="category-tab px-6 py-3 rounded-lg font-medium transition-all bg-gray-200 text-gray-700">
-                🏢 เอกสารบริหาร
-            </button>
-            <button onclick="setActiveCategory('การเงิน')" class="category-tab px-6 py-3 rounded-lg font-medium transition-all bg-gray-200 text-gray-700">
-                💰 เอกสารการเงิน
-            </button>
-            <button onclick="setActiveCategory('บุคลากร')" class="category-tab px-6 py-3 rounded-lg font-medium transition-all bg-gray-200 text-gray-700">
-                👥 เอกสารบุคลากร
-            </button>
-            <button onclick="setActiveCategory('โครงการ')" class="category-tab px-6 py-3 rounded-lg font-medium transition-all bg-gray-200 text-gray-700">
-                📊 เอกสารโครงการ
-            </button>
+        <!-- Document List -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+                <h2 class="text-xl font-semibold">📚 รายการเอกสาร</h2>
+            </div>
+            
+            <div id="documentList" class="divide-y divide-gray-200">
+                <!-- Documents will be populated by JavaScript -->
+            </div>
         </div>
 
-        <!-- Documents Grid -->
-        <div id="documentsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <!-- Documents will be populated here -->
-        </div>
-
-        <!-- Empty State -->
-        <div id="emptyState" class="text-center py-16 hidden">
-            <div class="text-6xl mb-4">📄</div>
-            <h3 class="text-xl font-semibold text-gray-600 mb-2">ไม่พบเอกสาร</h3>
-            <p class="text-gray-500">ลองค้นหาด้วยคำค้นอื่น หรือเพิ่มเอกสารใหม่</p>
-        </div>
-    </div>
-
-    <!-- Upload Modal -->
-    <div id="uploadModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
-        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4">
-            <h3 class="text-2xl font-bold mb-6 text-gray-800">เพิ่มเอกสารใหม่</h3>
-            <form onsubmit="addDocument(event)">
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-medium mb-2">ชื่อเอกสาร</label>
-                    <input type="text" id="docName" required 
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                </div>
-                <div class="mb-4">
-                    <label class="block text-gray-700 font-medium mb-2">หมวดหมู่</label>
-                    <select id="docCategory" required 
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                        <option value="">เลือกหมวดหมู่</option>
-                        <option value="บริหาร">เอกสารบริหาร</option>
-                        <option value="การเงิน">เอกสารการเงิน</option>
-                        <option value="บุคลากร">เอกสารบุคลากร</option>
-                        <option value="โครงการ">เอกสารโครงการ</option>
-                        <option value="อื่นๆ">อื่นๆ</option>
-                    </select>
-                </div>
-                <div class="mb-6">
-                    <label class="block text-gray-700 font-medium mb-2">ลิงก์ PDF</label>
-                    <input type="url" id="docUrl" required placeholder="https://example.com/document.pdf"
-                           class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
-                    <p class="text-sm text-gray-500 mt-1">ใส่ลิงก์ไปยังไฟล์ PDF ที่ต้องการ</p>
-                </div>
-                <div class="flex gap-4">
-                    <button type="button" onclick="hideUploadModal()" 
-                            class="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                        ยกเลิก
-                    </button>
-                    <button type="submit" 
-                            class="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors">
-                        เพิ่มเอกสาร
-                    </button>
-                </div>
-            </form>
+        <!-- Footer -->
+        <div class="text-center mt-8 text-gray-500">
+            <p class="text-sm">© 2024 ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล</p>
         </div>
     </div>
 
     <script>
-        // Sample documents data
-        let documents = [
+        const documents = [
             {
                 id: 1,
-                name: "รายงานประจำปี 2567",
-                category: "บริหาร",
-                url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                dateAdded: "2024-01-15",
-                size: "2.5 MB"
+                code: "SD-NSO-0700-001",
+                title: "แนวทาง/มาตรฐาน/คู่มือ ฯลฯ เรื่อง แนวทางปฏิบัติเรื่อง Ventilator Care",
+                category: "การดูแลเครื่องช่วยหายใจ",
+                icon: "🫁",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
             },
             {
                 id: 2,
-                name: "งบประมาณรายจ่าย Q1",
-                category: "การเงิน",
-                url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                dateAdded: "2024-01-10",
-                size: "1.8 MB"
+                code: "SD-NSO-0700-002",
+                title: "แนวปฏิบัติเรื่องการพยาบาลทางคลินิกสำหรับผู้ป่วยที่มีภาวะ sepsis และ septic shock",
+                category: "การดูแลผู้ป่วยวิกฤต",
+                icon: "🩺",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
             },
             {
                 id: 3,
-                name: "คู่มือพนักงานใหม่",
-                category: "บุคลากร",
-                url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                dateAdded: "2024-01-08",
-                size: "3.2 MB"
+                code: "SD-NSO-0700-003",
+                title: "แนวปฏิบัติการดูแลผู้ป่วย ACS",
+                category: "โรคหัวใจ",
+                icon: "❤️",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
             },
             {
                 id: 4,
-                name: "แผนโครงการพัฒนาระบบ",
-                category: "โครงการ",
-                url: "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-                dateAdded: "2024-01-05",
-                size: "4.1 MB"
+                code: "SD-NSO-0700-004",
+                title: "แนวปฏิบัติการดูแลผู้ป่วยโรคหัวใจล้มเหลว (Heart Failure)",
+                category: "โรคหัวใจ",
+                icon: "💔",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 5,
+                code: "SD-NSO-0700-005",
+                title: "แนวปฏิบัติการดูแลผู้ป่วยที่ใส่เครื่อง CIED",
+                category: "อุปกรณ์การแพทย์",
+                icon: "⚡",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 6,
+                code: "SD-NSO-0700-006",
+                title: "แนวปฏิบัติ เรื่อง \"Febrile neutropenia\"",
+                category: "โรคเลือด",
+                icon: "🌡️",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 7,
+                code: "SD-NSO-0700-007",
+                title: "แนวปฏิบัติเรื่อง \"การบริหารจัดการเคมีบำบัด\"",
+                category: "การรักษาโรคมะเร็ง",
+                icon: "💊",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 8,
+                code: "SD-NSO-0700-008",
+                title: "แนวทางปฏิบัติ เรื่อง \"การดูแลผู้ป่วยที่ได้รับการทำหัตถการระบบทางเดินอาหาร\"",
+                category: "ระบบทางเดินอาหาร",
+                icon: "🍽️",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 9,
+                code: "SD-NSO-0700-009",
+                title: "แนวทางปฏิบัติ เรื่องการยกระดับความปลอดภัยผู้ป่วยด้วย Concurrent Trigger Tool National Early Warning Scores 2; NEWS2 ในงานการพยาบาลผู้ป่วยอายุรศาสตร์",
+                category: "ความปลอดภัยผู้ป่วย",
+                icon: "🚨",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 10,
+                code: "SD-NSO-0700-010",
+                title: "แนวทาง/มาตรฐาน/คู่มือ เรื่อง แนวปฏิบัติการทำแผลสายสวนเส้นเลือดดำสองหาง หน่วยไตเทียมฉุกเฉิน",
+                category: "การดูแลแผล",
+                icon: "🩹",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 11,
+                code: "SD-NSO-0700-011",
+                title: "แนวทางปฏิบัติเรื่อง \"การดูแลแผล และ สาย central venous catheter\"",
+                category: "การดูแลแผล",
+                icon: "🔗",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 12,
+                code: "SD-NSO-0700-012",
+                title: "แนวทาง เรื่องการส่งเลือดเพาะเชื้อจากสายสวนหลอดเลือดดำส่วนกลาง",
+                category: "การตรวจทางห้องปฏิบัติการ",
+                icon: "🧪",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 13,
+                code: "SD-NSO-0700-013",
+                title: "แนวทางปฏิบัติเรื่อง การดูแลผู้ป่วย Ischemic stroke",
+                category: "โรคระบบประสาท",
+                icon: "🧠",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 14,
+                code: "SD-NSO-0700-014",
+                title: "แนวทางปฏิบัติ เรื่อง \"การช่วยแพทย์ให้เคมีบำบัดทางช่องไขสันหลังและการดูแลผู้ป่วย\"",
+                category: "การรักษาโรคมะเร็ง",
+                icon: "💉",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 15,
+                code: "SD-NSO-0700-015",
+                title: "แนวทางปฏิบัติการให้ข้อมูลโดยใช้ Voice of Customer Medical Category Ethical Screening Tool",
+                category: "จริยธรรมทางการแพทย์",
+                icon: "📋",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 16,
+                code: "SD-NSO-0700-016",
+                title: "แนวปฏิบัติ เรื่อง \"การบริหารเวลาในการให้ยาปฏิชีวนะชนิดฉีดเข้าวงรอบมาตรฐาน หลังการให้ยาครั้งแรกทันที\"",
+                category: "การให้ยา",
+                icon: "⏰",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 17,
+                code: "SD-NSO-0700-017",
+                title: "แนวทางปฏิบัติ เรื่องแนวปฏิบัติการดูแลเพื่อป้องกันท่อช่วยหายใจเลื่อนหลุดในงานการพยาบาลผู้ป่วยอายุรศาสตร์",
+                category: "การดูแลเครื่องช่วยหายใจ",
+                icon: "🔒",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 18,
+                code: "SD-NSO-0700-018",
+                title: "แนวทางปฏิบัติเรื่อง \"การดูแลผู้ป่วยเพื่อป้องกันภาวะ Pneumothorax\"",
+                category: "ระบบหายใจ",
+                icon: "🫁",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 19,
+                code: "SD-NSO-0700-019",
+                title: "แนวทางปฏิบัติเรื่อง \"การดูแลผู้ป่วยให้ปลอดภัยเมื่อได้รับยา Norepinephrine\"",
+                category: "การให้ยา",
+                icon: "💊",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 20,
+                code: "SD-NSO-0700-020",
+                title: "แนวทางปฏิบัติเรื่อง \"การป้องกันผู้ป่วยหนี\"",
+                category: "ความปลอดภัยผู้ป่วย",
+                icon: "🚪",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 21,
+                code: "SD-NSO-0700-021",
+                title: "แนวทางปฏิบัติเรื่อง \"การป้องกันผู้ป่วยทำร้ายตัวเอง/ฆ่าตัวตาย\"",
+                category: "ความปลอดภัยผู้ป่วย",
+                icon: "🛡️",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 22,
+                code: "SD-NSO-0700-022",
+                title: "แนวทางปฏิบัติเรื่อง \"การจัดการอาการรบกวน (เหนื่อยและปวด)\"",
+                category: "การจัดการอาการ",
+                icon: "😌",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
+            },
+            {
+                id: 23,
+                code: "SD-NSO-0700-023",
+                title: "แนวทางปฏิบัติเรื่อง\"การพยาบาลผู้ป่วยที่ On PORT A Cath\"",
+                category: "อุปกรณ์การแพทย์",
+                icon: "🔌",
+                url: "" // ใส่ลิงก์เอกสารตรงนี้
             }
         ];
 
-        let currentCategory = 'all';
+        function renderDocuments(docs) {
+            const documentList = document.getElementById('documentList');
+            documentList.innerHTML = '';
 
-        function getCategoryIcon(category) {
-            const icons = {
-                'บริหาร': '🏢',
-                'การเงิน': '💰',
-                'บุคลากร': '👥',
-                'โครงการ': '📊',
-                'อื่นๆ': '📄'
-            };
-            return icons[category] || '📄';
-        }
-
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            return date.toLocaleDateString('th-TH');
-        }
-
-        function renderDocuments(docs = documents) {
-            const grid = document.getElementById('documentsGrid');
-            const emptyState = document.getElementById('emptyState');
-            
-            if (docs.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
-            
-            grid.innerHTML = docs.map(doc => `
-                <div class="document-card bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all cursor-pointer">
-                    <div class="flex items-start justify-between mb-4">
-                        <div class="text-3xl">${getCategoryIcon(doc.category)}</div>
-                        <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
-                            ${doc.category}
-                        </span>
-                    </div>
-                    
-                    <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-2">${doc.name}</h3>
-                    
-                    <div class="text-sm text-gray-500 mb-4 space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span>📅</span>
-                            <span>${formatDate(doc.dateAdded)}</span>
+            docs.forEach(doc => {
+                const docElement = document.createElement('div');
+                docElement.className = 'p-6 hover:bg-gray-50 transition-colors duration-200';
+                docElement.innerHTML = `
+                    <div class="flex items-start space-x-4">
+                        <div class="flex-shrink-0">
+                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
+                                ${doc.icon}
+                            </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <span>📏</span>
-                            <span>${doc.size}</span>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center space-x-3 mb-2">
+                                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                    ${doc.code}
+                                </span>
+                                <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
+                                    ${doc.category}
+                                </span>
+                            </div>
+                            <h3 class="text-lg font-medium text-gray-900 mb-2 leading-relaxed">
+                                ${doc.title}
+                            </h3>
+                            <div class="flex space-x-3">
+                                <button 
+                                    onclick="viewDocument('${doc.code}')"
+                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+                                >
+                                    <span>📖</span>
+                                    <span>ดูเอกสาร</span>
+                                </button>
+                                <button 
+                                    onclick="downloadDocument('${doc.code}')"
+                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
+                                >
+                                    <span>📥</span>
+                                    <span>ดาวน์โหลด</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                    
-                    <div class="flex gap-2">
-                        <button onclick="openDocument('${doc.url}')" 
-                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
-                            📖 เปิดดู
-                        </button>
-                        <button onclick="deleteDocument(${doc.id})" 
-                                class="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded-lg text-sm font-medium transition-colors">
-                            🗑️
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function openDocument(url) {
-            window.open(url, '_blank', 'noopener,noreferrer');
-        }
-
-        function deleteDocument(id) {
-            if (confirm('คุณต้องการลบเอกสารนี้หรือไม่?')) {
-                documents = documents.filter(doc => doc.id !== id);
-                filterDocuments();
-            }
-        }
-
-        function setActiveCategory(category) {
-            currentCategory = category;
-            
-            // Update active tab
-            document.querySelectorAll('.category-tab').forEach(tab => {
-                tab.classList.remove('active');
+                `;
+                documentList.appendChild(docElement);
             });
-            event.target.classList.add('active');
-            
-            filterDocuments();
         }
 
-        function filterDocuments() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            const categoryFilter = document.getElementById('categoryFilter').value;
+        function viewDocument(code) {
+            const doc = documents.find(d => d.code === code);
             
-            let filtered = documents;
-            
-            // Filter by active category
-            if (currentCategory !== 'all') {
-                filtered = filtered.filter(doc => doc.category === currentCategory);
+            if (doc && doc.url && doc.url.trim() !== '') {
+                // เปิดลิงก์จริงที่ใส่ไว้
+                window.open(doc.url, '_blank', 'noopener,noreferrer');
+                showNotification(`กำลังเปิดเอกสาร ${code}`, 'info');
+            } else {
+                // แสดงข้อความเมื่อยังไม่มีลิงก์
+                showNotification(`ยังไม่มีลิงก์สำหรับเอกสาร ${code}`, 'warning');
             }
-            
-            // Filter by dropdown category
-            if (categoryFilter) {
-                filtered = filtered.filter(doc => doc.category === categoryFilter);
-            }
-            
-            // Filter by search term
-            if (searchTerm) {
-                filtered = filtered.filter(doc => 
-                    doc.name.toLowerCase().includes(searchTerm) ||
-                    doc.category.toLowerCase().includes(searchTerm)
-                );
-            }
-            
-            renderDocuments(filtered);
         }
 
-        function showUploadModal() {
-            document.getElementById('uploadModal').classList.remove('hidden');
-            document.getElementById('uploadModal').classList.add('flex');
+        function downloadDocument(code) {
+            // สำหรับตัวอย่าง - ในการใช้งานจริงจะเป็น URL ดาวน์โหลดจริง
+            showNotification(`กำลังดาวน์โหลดเอกสาร ${code}`, 'success');
         }
 
-        function hideUploadModal() {
-            document.getElementById('uploadModal').classList.add('hidden');
-            document.getElementById('uploadModal').classList.remove('flex');
-            document.getElementById('docName').value = '';
-            document.getElementById('docCategory').value = '';
-            document.getElementById('docUrl').value = '';
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-500' : 
+                           type === 'warning' ? 'bg-orange-500' : 'bg-blue-500';
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 transform transition-all duration-300 ${bgColor}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
         }
 
-        function addDocument(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('docName').value;
-            const category = document.getElementById('docCategory').value;
-            const url = document.getElementById('docUrl').value;
-            
-            const newDoc = {
-                id: Date.now(),
-                name: name,
-                category: category,
-                url: url,
-                dateAdded: new Date().toISOString().split('T')[0],
-                size: "ไม่ทราบขนาด"
-            };
-            
-            documents.unshift(newDoc);
-            hideUploadModal();
-            filterDocuments();
-            
-            // Show success message
-            alert('เพิ่มเอกสารเรียบร้อยแล้ว!');
-        }
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredDocs = documents.filter(doc => 
+                doc.code.toLowerCase().includes(searchTerm) || 
+                doc.title.toLowerCase().includes(searchTerm) ||
+                doc.category.toLowerCase().includes(searchTerm)
+            );
+            renderDocuments(filteredDocs);
+        });
 
-        // Initialize the app
-        renderDocuments();
+        // Initial render
+        renderDocuments(documents);
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9873f4de65e599a6',t:'MTc1OTIzNzc4NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987480ec222745ba',t:'MTc1OTI0MzUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

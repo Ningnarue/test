@@ -3,364 +3,311 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล</title>
+    <title>เอกสารหอผู้ป่วยหนักอายุรกรรม งานการพยาบาลผู้ป่วยอายุรศาสตร์</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             box-sizing: border-box;
         }
-        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
-        body {
-            font-family: 'Sarabun', sans-serif;
+        .document-card {
+            transition: all 0.3s ease;
+        }
+        .document-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        .search-highlight {
+            background-color: #fef08a;
+            padding: 2px 4px;
+            border-radius: 3px;
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
     <div class="container mx-auto px-4 py-8">
         <!-- Header -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <h1 class="text-3xl font-bold text-gray-800 text-center mb-2">
-                📋 ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล
-            </h1>
-            <p class="text-gray-600 text-center">
-                เอกสารแนวทาง/มาตรฐาน/คู่มือการปฏิบัติงานทางการพยาบาล
-            </p>
-            <div class="mt-4 text-center">
-                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium">
-                    📊 รวม 23 เอกสาร
-                </span>
-            </div>
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">เอกสารหอผู้ป่วยหนักอายุรกรรม งานการพยาบาลผู้ป่วยอายุรศาสตร์</h1>
+            <p class="text-gray-600 text-lg">เอกสารมาตรฐานและแนวทางปฏิบัติทางการพยาบาล</p>
         </div>
 
         <!-- Search Bar -->
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-            <div class="relative mb-4">
+        <div class="max-w-2xl mx-auto mb-8">
+            <div class="relative">
                 <input 
                     type="text" 
-                    id="searchInput"
-                    placeholder="🔍 ค้นหาเอกสาร (รหัส หรือ ชื่อเอกสาร)..."
-                    class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    id="searchInput" 
+                    placeholder="ค้นหาเอกสาร..." 
+                    class="w-full px-6 py-4 text-lg border-2 border-gray-300 rounded-full focus:border-blue-500 focus:outline-none shadow-lg"
                 >
-                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-                    🔍
-                </div>
-            </div>
-            <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                <div class="flex items-start space-x-2">
-                    <span class="text-yellow-600">💡</span>
-                    <div class="text-sm text-yellow-800">
-                        <strong>วิธีใส่ลิงก์เอกสาร:</strong> 
-                        <br>1. เปิดไฟล์ HTML ในโปรแกรมแก้ไขข้อความ
-                        <br>2. หาบรรทัดที่มี <code class="bg-yellow-100 px-1 rounded">url: ""</code> ของเอกสารที่ต้องการ
-                        <br>3. ใส่ลิงก์ระหว่างเครื่องหมายคำพูด เช่น <code class="bg-yellow-100 px-1 rounded">url: "https://example.com/document.pdf"</code>
-                        <br>4. บันทึกไฟล์และรีเฟรชหน้าเว็บ
-                    </div>
+                <div class="absolute right-4 top-1/2 transform -translate-y-1/2">
+                    <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <!-- Document List -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
-                <h2 class="text-xl font-semibold">📚 รายการเอกสาร</h2>
+        <!-- Statistics -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-blue-600" id="totalDocs">23</div>
+                <div class="text-gray-600">เอกสารทั้งหมด</div>
             </div>
-            
-            <div id="documentList" class="divide-y divide-gray-200">
-                <!-- Documents will be populated by JavaScript -->
+            <div class="bg-white rounded-xl shadow-lg p-6 text-center">
+                <div class="text-3xl font-bold text-green-600" id="visibleDocs">23</div>
+                <div class="text-gray-600">เอกสารที่แสดง</div>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="text-center mt-8 text-gray-500">
-            <p class="text-sm">© 2024 ระบบจัดการเอกสารแนวปฏิบัติทางการพยาบาล</p>
+        <!-- Documents List -->
+        <div id="documentsContainer" class="space-y-4">
+            <!-- Documents will be populated by JavaScript -->
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="hidden text-center py-12">
+            <div class="text-6xl mb-4">🔍</div>
+            <h3 class="text-2xl font-semibold text-gray-700 mb-2">ไม่พบเอกสารที่ค้นหา</h3>
+            <p class="text-gray-500">ลองใช้คำค้นหาอื่น หรือตรวจสอบการสะกดคำ</p>
         </div>
     </div>
 
     <script>
+        // Document data
         const documents = [
             {
-                id: 1,
-                code: "SD-NSO-0700-001",
+                id: "SD-NSO-0700-001",
                 title: "แนวทาง/มาตรฐาน/คู่มือ ฯลฯ เรื่อง แนวทางปฏิบัติเรื่อง Ventilator Care",
-                category: "การดูแลเครื่องช่วยหายใจ",
-                icon: "🫁",
-                url: "" // https://drive.google.com/file/d/1kACKHILcdCfpBDO0K7C78NzgASLBRTGX/view?usp=drive_link
+                driveUrl: "https://drive.google.com/file/d/1kACKHILcdCfpBDO0K7C78NzgASLBRTGX/view"
             },
             {
-                id: 2,
-                code: "SD-NSO-0700-002",
+                id: "SD-NSO-0700-002",
                 title: "แนวปฏิบัติเรื่องการพยาบาลทางคลินิกสำหรับผู้ป่วยที่มีภาวะ sepsis และ septic shock",
-                category: "การดูแลผู้ป่วยวิกฤต",
-                icon: "🩺",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1urruswhIFkDCXdo7zMYJ3xS9rtUuYhi0/view"
             },
             {
-                id: 3,
-                code: "SD-NSO-0700-003",
+                id: "SD-NSO-0700-003",
                 title: "แนวปฏิบัติการดูแลผู้ป่วย ACS",
-                category: "โรคหัวใจ",
-                icon: "❤️",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1zRWIZlMpX9FJX5gvQWA_hPuUME6ooCGw/view"
             },
             {
-                id: 4,
-                code: "SD-NSO-0700-004",
+                id: "SD-NSO-0700-004",
                 title: "แนวปฏิบัติการดูแลผู้ป่วยโรคหัวใจล้มเหลว (Heart Failure)",
-                category: "โรคหัวใจ",
-                icon: "💔",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/143Rtu0iG5e4u7ZkFIyQCwv6dHEDiUXpT/view"
             },
             {
-                id: 5,
-                code: "SD-NSO-0700-005",
+                id: "SD-NSO-0700-005",
                 title: "แนวปฏิบัติการดูแลผู้ป่วยที่ใส่เครื่อง CIED",
-                category: "อุปกรณ์การแพทย์",
-                icon: "⚡",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1yTWIZw_O-ck_fd7w6AHo8w0-83qUxKPs/view"
             },
             {
-                id: 6,
-                code: "SD-NSO-0700-006",
+                id: "SD-NSO-0700-006",
                 title: "แนวปฏิบัติ เรื่อง \"Febrile neutropenia\"",
-                category: "โรคเลือด",
-                icon: "🌡️",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1qjD_C2JNrjcIyGCfjGNS3ZUnERRJSQ_9/view"
             },
             {
-                id: 7,
-                code: "SD-NSO-0700-007",
+                id: "SD-NSO-0700-007",
                 title: "แนวปฏิบัติเรื่อง \"การบริหารจัดการเคมีบำบัด\"",
-                category: "การรักษาโรคมะเร็ง",
-                icon: "💊",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1YN4_5CmIfZ9RRe11IlAzHRhxIp1-VCzV/view"
             },
             {
-                id: 8,
-                code: "SD-NSO-0700-008",
+                id: "SD-NSO-0700-008",
                 title: "แนวทางปฏิบัติ เรื่อง \"การดูแลผู้ป่วยที่ได้รับการทำหัตถการระบบทางเดินอาหาร\"",
-                category: "ระบบทางเดินอาหาร",
-                icon: "🍽️",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1MZKuhxChKfj91T-cTeIxHAuCF1LpeKvy/view"
             },
             {
-                id: 9,
-                code: "SD-NSO-0700-009",
+                id: "SD-NSO-0700-009",
                 title: "แนวทางปฏิบัติ เรื่องการยกระดับความปลอดภัยผู้ป่วยด้วย Concurrent Trigger Tool National Early Warning Scores 2; NEWS2 ในงานการพยาบาลผู้ป่วยอายุรศาสตร์",
-                category: "ความปลอดภัยผู้ป่วย",
-                icon: "🚨",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1SDJYrVJvOcYNyjwfrplcuqpI3XPQqD0_/view"
             },
             {
-                id: 10,
-                code: "SD-NSO-0700-010",
+                id: "SD-NSO-0700-010",
                 title: "แนวทาง/มาตรฐาน/คู่มือ เรื่อง แนวปฏิบัติการทำแผลสายสวนเส้นเลือดดำสองหาง หน่วยไตเทียมฉุกเฉิน",
-                category: "การดูแลแผล",
-                icon: "🩹",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1foG1p0-knuNs5JWJlyfk4Nxm5y9OiCGf/view"
             },
             {
-                id: 11,
-                code: "SD-NSO-0700-011",
+                id: "SD-NSO-0700-011",
                 title: "แนวทางปฏิบัติเรื่อง \"การดูแลแผล และ สาย central venous catheter\"",
-                category: "การดูแลแผล",
-                icon: "🔗",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1IT1LLoswt-bb9pfaWr8IEpIx6m1DneNa/view"
             },
             {
-                id: 12,
-                code: "SD-NSO-0700-012",
+                id: "SD-NSO-0700-012",
                 title: "แนวทาง เรื่องการส่งเลือดเพาะเชื้อจากสายสวนหลอดเลือดดำส่วนกลาง",
-                category: "การตรวจทางห้องปฏิบัติการ",
-                icon: "🧪",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1ywHAeUmhLbPfNv5qaVSxhzUCYzLNerLM/view"
             },
             {
-                id: 13,
-                code: "SD-NSO-0700-013",
+                id: "SD-NSO-0700-013",
                 title: "แนวทางปฏิบัติเรื่อง การดูแลผู้ป่วย Ischemic stroke",
-                category: "โรคระบบประสาท",
-                icon: "🧠",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1MKYLNwnnWX_1BKDaGqv8U0lE5uzRWyPV/view"
             },
             {
-                id: 14,
-                code: "SD-NSO-0700-014",
+                id: "SD-NSO-0700-014",
                 title: "แนวทางปฏิบัติ เรื่อง \"การช่วยแพทย์ให้เคมีบำบัดทางช่องไขสันหลังและการดูแลผู้ป่วย\"",
-                category: "การรักษาโรคมะเร็ง",
-                icon: "💉",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1Z0L_Z7nR4DT90eo_Bq-oD6zsBEHEZvIs/view"
             },
             {
-                id: 15,
-                code: "SD-NSO-0700-015",
-                title: "แนวทางปฏิบัติการให้ข้อมูลโดยใช้ Voice of Customer Medical Category Ethical Screening Tool",
-                category: "จริยธรรมทางการแพทย์",
-                icon: "📋",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                id: "SD-NSO-0700-015",
+                title: "แนวทางปฏิบัติการให้ข้อมูลโดยใช้Voice of Customer Medical Category Ethical Screening Tool",
+                driveUrl: "https://drive.google.com/file/d/1I9PKGv57QfELfcg1WRiXHzdJi36u3TL4/view"
             },
             {
-                id: 16,
-                code: "SD-NSO-0700-016",
-                title: "แนวปฏิบัติ เรื่อง \"การบริหารเวลาในการให้ยาปฏิชีวนะชนิดฉีดเข้าวงรอบมาตรฐาน หลังการให้ยาครั้งแรกทันที\"",
-                category: "การให้ยา",
-                icon: "⏰",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                id: "SD-NSO-0700-016",
+                title: "แนวปฏิบัติ เรื่อง \"การบริหารเวลาในการให้ยาปฏิชีวนะชนิดฉีดเข้าวงรอบมาตรฐานหลังการให้ยาครั้งแรกทันที\"",
+                driveUrl: "https://drive.google.com/file/d/1fi-njw2hUAllPk4r1rEfH3oB7reVssTP/view"
             },
             {
-                id: 17,
-                code: "SD-NSO-0700-017",
+                id: "SD-NSO-0700-017",
                 title: "แนวทางปฏิบัติ เรื่องแนวปฏิบัติการดูแลเพื่อป้องกันท่อช่วยหายใจเลื่อนหลุดในงานการพยาบาลผู้ป่วยอายุรศาสตร์",
-                category: "การดูแลเครื่องช่วยหายใจ",
-                icon: "🔒",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1LuvbM26qjhEMOFvJVRmW5_INt8-6Lywi/view"
             },
             {
-                id: 18,
-                code: "SD-NSO-0700-018",
+                id: "SD-NSO-0700-018",
                 title: "แนวทางปฏิบัติเรื่อง \"การดูแลผู้ป่วยเพื่อป้องกันภาวะ Pneumothorax\"",
-                category: "ระบบหายใจ",
-                icon: "🫁",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1PP9ZcDp8SoP1SiWmclFkxResGqXfLlgq/view"
             },
             {
-                id: 19,
-                code: "SD-NSO-0700-019",
+                id: "SD-NSO-0700-019",
                 title: "แนวทางปฏิบัติเรื่อง \"การดูแลผู้ป่วยให้ปลอดภัยเมื่อได้รับยา Norepinephrine\"",
-                category: "การให้ยา",
-                icon: "💊",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/14bND6nVldgtxibSWQeeVrJadcqMBMQAs/view"
             },
             {
-                id: 20,
-                code: "SD-NSO-0700-020",
+                id: "SD-NSO-0700-020",
                 title: "แนวทางปฏิบัติเรื่อง \"การป้องกันผู้ป่วยหนี\"",
-                category: "ความปลอดภัยผู้ป่วย",
-                icon: "🚪",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1JprmplhRyM1DicYBQNl909Pr6zCiewma/view"
             },
             {
-                id: 21,
-                code: "SD-NSO-0700-021",
+                id: "SD-NSO-0700-021",
                 title: "แนวทางปฏิบัติเรื่อง \"การป้องกันผู้ป่วยทำร้ายตัวเอง/ฆ่าตัวตาย\"",
-                category: "ความปลอดภัยผู้ป่วย",
-                icon: "🛡️",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1kilebF7A-FsEVUjWbZ5Krh7_qEvLAScR/view"
             },
             {
-                id: 22,
-                code: "SD-NSO-0700-022",
+                id: "SD-NSO-0700-022",
                 title: "แนวทางปฏิบัติเรื่อง \"การจัดการอาการรบกวน (เหนื่อยและปวด)\"",
-                category: "การจัดการอาการ",
-                icon: "😌",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1JUZVKIvlXThopysTVVxJQPeKZaPtQB_P/view"
             },
             {
-                id: 23,
-                code: "SD-NSO-0700-023",
+                id: "SD-NSO-0700-023",
                 title: "แนวทางปฏิบัติเรื่อง\"การพยาบาลผู้ป่วยที่ On PORT A Cath\"",
-                category: "อุปกรณ์การแพทย์",
-                icon: "🔌",
-                url: "" // ใส่ลิงก์เอกสารตรงนี้
+                driveUrl: "https://drive.google.com/file/d/1wfYfFPxs_vhKTP1nrGtL_9zRasLXIUz4/view"
             }
         ];
 
-        function renderDocuments(docs) {
-            const documentList = document.getElementById('documentList');
-            documentList.innerHTML = '';
+        let filteredDocuments = [...documents];
 
-            docs.forEach(doc => {
-                const docElement = document.createElement('div');
-                docElement.className = 'p-6 hover:bg-gray-50 transition-colors duration-200';
-                docElement.innerHTML = `
-                    <div class="flex items-start space-x-4">
-                        <div class="flex-shrink-0">
-                            <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center text-xl">
-                                ${doc.icon}
+        function highlightText(text, searchTerm) {
+            if (!searchTerm) return text;
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            return text.replace(regex, '<span class="search-highlight">$1</span>');
+        }
+
+        function renderDocuments() {
+            const container = document.getElementById('documentsContainer');
+            const noResults = document.getElementById('noResults');
+            const visibleDocsCount = document.getElementById('visibleDocs');
+            
+            if (filteredDocuments.length === 0) {
+                container.innerHTML = '';
+                noResults.classList.remove('hidden');
+                visibleDocsCount.textContent = '0';
+                return;
+            }
+
+            noResults.classList.add('hidden');
+            visibleDocsCount.textContent = filteredDocuments.length;
+
+            const searchTerm = document.getElementById('searchInput').value;
+
+            container.innerHTML = filteredDocuments.map((doc, index) => `
+                <div class="document-card bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 flex items-center justify-between">
+                    <div class="flex items-center gap-6 flex-1">
+                        <div class="flex items-center gap-4">
+                            <div class="text-gray-400 text-lg font-semibold min-w-[3rem]">
+                                ${index + 1}
+                            </div>
+                            <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">
+                                ${doc.id}
                             </div>
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center space-x-3 mb-2">
-                                <span class="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                                    ${doc.code}
-                                </span>
-                                <span class="bg-gray-100 text-gray-700 px-2 py-1 rounded-full text-xs">
-                                    ${doc.category}
-                                </span>
-                            </div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-2 leading-relaxed">
-                                ${doc.title}
-                            </h3>
-                            <div class="flex space-x-3">
-                                <button 
-                                    onclick="viewDocument('${doc.code}')"
-                                    class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
-                                >
-                                    <span>📖</span>
-                                    <span>ดูเอกสาร</span>
-                                </button>
-                                <button 
-                                    onclick="downloadDocument('${doc.code}')"
-                                    class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors duration-200 flex items-center space-x-2"
-                                >
-                                    <span>📥</span>
-                                    <span>ดาวน์โหลด</span>
-                                </button>
-                            </div>
-                        </div>
+                        
+                        <h3 class="text-lg font-semibold text-gray-800 leading-relaxed flex-1">
+                            ${highlightText(doc.title, searchTerm)}
+                        </h3>
                     </div>
-                `;
-                documentList.appendChild(docElement);
+                    
+                    <div class="flex gap-3 ml-6">
+                        <button 
+                            onclick="openDocument('${doc.driveUrl}')"
+                            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                            เปิดดู PDF
+                        </button>
+                        
+                        <button 
+                            onclick="copyLink('${doc.driveUrl}')"
+                            class="bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-3 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                            title="คัดลอกลิงก์"
+                        >
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openDocument(url) {
+            // แสดงข้อความแจ้งเตือนเนื่องจากเป็น URL ตัวอย่าง
+            if (url.includes('YOUR_FILE_ID')) {
+                alert('กรุณาแทนที่ YOUR_FILE_ID ด้วย ID ไฟล์จริงจาก Google Drive\n\nตัวอย่าง: https://drive.google.com/file/d/1ABC123xyz/view');
+                return;
+            }
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function copyLink(url) {
+            if (url.includes('YOUR_FILE_ID')) {
+                alert('กรุณาแทนที่ YOUR_FILE_ID ด้วย ID ไฟล์จริงจาก Google Drive');
+                return;
+            }
+            
+            navigator.clipboard.writeText(url).then(() => {
+                // แสดงข้อความยืนยัน
+                const button = event.target.closest('button');
+                const originalHTML = button.innerHTML;
+                button.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                button.classList.add('bg-green-100', 'text-green-700');
+                
+                setTimeout(() => {
+                    button.innerHTML = originalHTML;
+                    button.classList.remove('bg-green-100', 'text-green-700');
+                }, 2000);
+            }).catch(() => {
+                alert('ไม่สามารถคัดลอกลิงก์ได้');
             });
         }
 
-        function viewDocument(code) {
-            const doc = documents.find(d => d.code === code);
+        function filterDocuments() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             
-            if (doc && doc.url && doc.url.trim() !== '') {
-                // เปิดลิงก์จริงที่ใส่ไว้
-                window.open(doc.url, '_blank', 'noopener,noreferrer');
-                showNotification(`กำลังเปิดเอกสาร ${code}`, 'info');
-            } else {
-                // แสดงข้อความเมื่อยังไม่มีลิงก์
-                showNotification(`ยังไม่มีลิงก์สำหรับเอกสาร ${code}`, 'warning');
-            }
-        }
-
-        function downloadDocument(code) {
-            // สำหรับตัวอย่าง - ในการใช้งานจริงจะเป็น URL ดาวน์โหลดจริง
-            showNotification(`กำลังดาวน์โหลดเอกสาร ${code}`, 'success');
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            const bgColor = type === 'success' ? 'bg-green-500' : 
-                           type === 'warning' ? 'bg-orange-500' : 'bg-blue-500';
-            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg text-white font-medium z-50 transform transition-all duration-300 ${bgColor}`;
-            notification.textContent = message;
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 3000);
-        }
-
-        // Search functionality
-        document.getElementById('searchInput').addEventListener('input', function(e) {
-            const searchTerm = e.target.value.toLowerCase();
-            const filteredDocs = documents.filter(doc => 
-                doc.code.toLowerCase().includes(searchTerm) || 
-                doc.title.toLowerCase().includes(searchTerm) ||
-                doc.category.toLowerCase().includes(searchTerm)
+            filteredDocuments = documents.filter(doc => 
+                doc.id.toLowerCase().includes(searchTerm) ||
+                doc.title.toLowerCase().includes(searchTerm)
             );
-            renderDocuments(filteredDocs);
-        });
+            
+            renderDocuments();
+        }
+
+        // Event listeners
+        document.getElementById('searchInput').addEventListener('input', filterDocuments);
 
         // Initial render
-        renderDocuments(documents);
+        renderDocuments();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'987480ec222745ba',t:'MTc1OTI0MzUyMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9874bd3fc31799a6',t:'MTc1OTI0NTk5My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
